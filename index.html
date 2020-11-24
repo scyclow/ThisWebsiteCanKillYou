@@ -1,0 +1,266 @@
+<html>
+<head>
+  <style>
+    * {
+      margin:0;
+      padding: 0;
+      font-family: sans-serif;
+    }
+
+    body {
+      background: #000000;
+      color: #ffffff;
+    }
+
+    #killme {
+      position: absolute;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      animation: flash infinite 200ms linear;
+    }
+
+
+    #canvas {
+      animation: spin infinite 2000ms linear;
+    }
+
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+
+    @keyframes flash {
+      0% { background-color: #ff0000; }
+      17% { background-color: #00ffff; }
+      33% { background-color: #00ff00; }
+      50% { background-color: #ff00ff; }
+      66% { background-color: #0000ff; }
+      83% { background-color: #ffff00; }
+      100% { background-color: #ff0000; }
+    }
+
+
+
+
+  </style>
+</head>
+<body>
+  <div id="saveme">
+    <h1 style="color:#ffffff">This Website Could Kill You</h1>
+    <h2>Horror movies</h2>
+    <ul>
+      <li>pulse</li>
+      <li>feardotcom</li>
+      <li>the ring</li>
+    </ul>
+    Explores the existential fear of society coming to terms with a new technology
+    This got me thinking: can a website actually kill you?
+
+    <h2>The terror of the web</h2>
+    When engineers think about security, they normally think about infosec.
+
+    Not enough time spent thinking about the physical security threat posed by a website
+
+    There are plenty of ways a website could kill you in the abstract. social media can slowly eat away at your soul until there's nothing left. The content of a website could convince you to commit suicide, etc.
+
+    But is it possible for a website to kill you on a visceral level?
+
+    It's unlikely, but actually is possible. Additionally, it's quite easy to cause physical discomfort.
+
+    what browser apis do we have at our disposal, which we can use to physically harm the user without their knowing consent?
+    Two ways fo doing this:
+    1. Visual stimulation. photosensitive epillepsy, trigger heart attack, diziness + uncomfortable
+    2. Audio stimulation. the gain on web audio api is dangerous. this can easily lead to mild hearing loss or inflict damage on audio equipment. chroms requires user interaction, but easy to trick user into doing it
+
+
+    <h2>Ubiquity</h2>
+
+    While audio/video is not unique to the web as a medium, its ubiquity is.
+
+    Unlike in the Ring, a dubious looking vhs doesn't have to show up to your door. Websites are ubiquitous and fritctionless. you could come accross a dangerous website by clicking a stray link on hacker news. the only consent needed to load a website into your browser is the split second decision to mindlessly click a link.
+
+    <h2>How to stop it</h2>
+
+    w3c meta tags for flash warning would be a nice start.
+    chrome/firefox should not allow audio to get that loud.
+
+    <h2>morality</h2>
+    i honestly feel sort of weird putting this website out there. i would feel a tremendous amount of guilt if ti actually killed someone. the whole preamble to the website is one giant red flag. my goal is to make it impossible to click it by accident.
+
+
+    <h2>the website</h2>
+    designed to physically shock the user with both loud noise and aggressive visual stimulation. visual stimulation (bars, flashing) inspired by descriptions of photosensative epillepsy triggers. additionally,
+    audio uses a blend of tones (low trigggers anxiety, high) and cranks the gain waaaay up. i promise, this is louder than you're expecting it to be. unless you've made the same mistakes i have, you're probably unaware that your computer can make noises this loud.
+
+    You also may notice that the canvas animations are causing your computer to heat up, triggering its fans. contributing to climate change. If you're on mobile, your phone will vibrate without your consent
+
+    As an extra annoyance to keep the sound on longer, the web page will ask for confirmaiton before navigating away from the page.
+
+    Additionally, the window will maximize on your screen without your consent.
+
+    <h3>canvas</h3>
+    choose filter levwl
+
+    <h3>audio</h3>
+    choose volume <em>warning: high levels may cause hearing loss or damage to your speakers</em>
+    if you want to see how loud it can get: highly suggest turning your physical volume all the way down, and slowly cranking it up.
+
+    <h3>confirmation</h3>
+    type in "I do not have epillepsy"
+    type in some other random confirmation
+    countdown timer (must spend at least 1 minute on page before clicking)
+    read TOS, click box
+
+
+    <button id="button">KILL ME</button>
+  </div>
+  <div id="killme">
+    <canvas id="canvas"></canvas>
+  </div>
+</body>
+
+<script>
+
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  const canvas = document.getElementById('canvas');
+  const saveme = document.getElementById('saveme');
+  const killme = document.getElementById('killme');
+  const button = document.getElementById('button');
+  const ctx = canvas.getContext('2d');
+
+  const width = window.innerWidth
+  const height = window.innerHeight
+  canvas.width = width
+  canvas.height = height
+
+  const sample = arr => arr[Math.floor(Math.random() * arr.length)]
+  const primaryColors = ['#550000', '#005500', '#000055', '#005555', '#550055', '#555500', '#000000']
+  const secondaryColors = ['#00ffff', '#ff55ff', '#ffff00', '#ff5555', '#00ff00', '#5555ff', '#ffffff']
+
+  const numTriangles = 20
+  function* createFrames(ctx) {
+    let fillColor = true
+    let offset = 0
+    const h = height / numTriangles
+
+    while (true) {
+      fillColor = !fillColor
+      offset = offset >= h ? 0 : offset + 1
+
+      ctx.clearRect(0, 0, width, height)
+      const int = Math.floor(Math.random() * 7)
+      const leftColor = fillColor ? primaryColors[int] : secondaryColors[int]
+      const rightColor = fillColor ? secondaryColors[int] : primaryColors[int]
+
+      for (let l = 0; l < numTriangles + 1; l++) {
+        const start = (height * l ) / numTriangles + offset
+        ctx.beginPath()
+        ctx.moveTo(0, start - h)
+        ctx.lineTo(width, start - h/2)
+        ctx.lineTo(0, start)
+        ctx.closePath()
+        ctx.lineWidth = 0
+        ctx.fillStyle = leftColor
+        ctx.stroke()
+        ctx.fill()
+      }
+      for (let r = 0; r < numTriangles + 1; r++) {
+        const start = (height * r ) / numTriangles + offset
+        const h = height / numTriangles
+        ctx.beginPath()
+        ctx.moveTo(width, start - h/2)
+        ctx.lineTo(0, start)
+        ctx.lineTo(width, start + h/2)
+        ctx.closePath()
+        ctx.lineWidth = 0
+        ctx.fillStyle = rightColor
+        ctx.stroke()
+        ctx.fill()
+      }
+
+      yield
+    }
+  }
+
+  const frames = createFrames(ctx)
+  const draw = i => {
+    frames.next()
+    window.requestAnimationFrame(draw)
+  }
+
+
+  const VOLUME = 8
+  const createTone = (ctx, freq) => {
+    const source = ctx.createOscillator()
+    const gain = ctx.createGain()
+    source.connect(gain)
+    gain.connect(ctx.destination)
+    gain.gain.value = VOLUME
+    source.frequency.setValueAtTime(freq, ctx.currentTime)
+    source.start()
+    return { source, gain }
+  }
+
+  const beExtraAnnoying = () => {
+    window.onbeforeunload = () => '.'
+    killme.requestFullscreen
+      ? killme.requestFullscreen()
+      : killme.webkitRequestFullscreen
+        ? killme.webkitRequestFullscreen()
+        : null
+
+    window.navigator.vibrate(20000)
+  }
+
+  const alternate = (tone, ms) => {
+    let on = true
+    setInterval(() => {
+      if (on) {
+        tone.gain.gain.value = 0
+      } else {
+        tone.gain.gain.value = VOLUME
+      }
+      on = !on
+    }, ms)
+  }
+
+  button.onclick = () => {
+    beExtraAnnoying()
+
+    setTimeout(() => {
+      saveme.style.display = 'none'
+      killme.style.display = 'flex'
+      draw()
+      const ctx = new AudioContext();
+      const tone = createTone(ctx, 400)
+
+      setTimeout(() => {
+        const highTone = createTone(ctx, 4000)
+        alternate(highTone, 4000)
+        // setTimeout(() => {
+        //   const lowTone = createTone(ctx, 20)
+        //   alternate(lowTone, 1000)
+        // }, 800)
+      }, 4000)
+    }, 1000)
+
+  }
+
+
+
+
+
+
+
+
+</script>
+</html>
+<!--  -->
